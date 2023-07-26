@@ -6,7 +6,7 @@ then
 	chown -R mysql:mysql /run/mysqld
 fi
 
-if [ ! -d "/var/lib/mysql/wp_database" ]
+if [ ! -d "/var/lib/mysql/$DATABASE_NAME" ]
 then
 	chown -R mysql:mysql /var/lib/mysql
 	mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm > /dev/null
@@ -25,11 +25,11 @@ DROP DATABASE test;
 DELETE FROM mysql.db WHERE Db='test';
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootpwd';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_ROOT_PWD';
 
-CREATE DATABASE wp_database DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-CREATE USER 'ebondi'@'%' IDENTIFIED BY 'ebondipwd';
-GRANT ALL PRIVILEGES ON wp_database.* TO 'ebondi'@'%';
+CREATE DATABASE $DATABASE_NAME DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE USER '$DATABASE_ADMIN'@'%' IDENTIFIED BY '$DATABASE_ADMIN_PWD';
+GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_ADMIN'@'%';
 FLUSH PRIVILEGES;
 EOF
 

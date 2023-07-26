@@ -14,3 +14,8 @@ services:
       build: requirements/mariadb/
       container_name: mariadb
       restart: always
+      environment:
+                DATABASE_NAME: ${DATABASE_NAME}
+                DB_ROOT_PWD: ${DB_ROOT_PWD}
+                DATABASE_ADMIN: ${DATABASE_ADMIN}
+                DATABASE_ADMIN_PWD: ${DATABASE_ADMIN_PWD}
