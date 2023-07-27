@@ -1,4 +1,25 @@
 version: '3'
+
+volumes:
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      device: /home/ebondi/data/wordpress
+      o: bind
+      type: none
+  wp_database:
+    name: wp_database
+    driver: local
+    driver_opts:
+      device: /home/ebondi/data/wp_database
+      o: bind
+      type: none
+
+networks:
+      webserver:
+      database:
+
 services:
 
     nginx:
@@ -7,15 +28,48 @@ services:
       container_name: nginx
       ports:
           - "443:443"
+      networks:
+            - webserver
       restart: always
 
     mariadb:
       image: mariadb
       build: requirements/mariadb/
       container_name: mariadb
+      volumes:
+          - wp_database:/var/lib/mysql
+      networks:
+            - database
       restart: always
       environment:
                 DATABASE_NAME: ${DATABASE_NAME}
                 DB_ROOT_PWD: ${DB_ROOT_PWD}
                 DATABASE_ADMIN: ${DATABASE_ADMIN}
                 DATABASE_ADMIN_PWD: ${DATABASE_ADMIN_PWD}
+
+    wordpress:
+      image: wordpress
+      build: requirements/wordpress/
+      container_name: wordpress
+      ports:
+          - "9000:9000"
+      volumes:
+          - wordpress:/var/www/html
+      networks:
+            - webserver
+            - database
+      depends_on:
+            - mariadb
+      restart: always
+      environment:
+                DB_HOSTNAME: ${DB_HOSTNAME}
+                DOMAIN_NAME: ${DOMAIN_NAME}
+                DATABASE_NAME: ${DATABASE_NAME}
+                DATABASE_ADMIN: ${DATABASE_ADMIN}
+                DATABASE_ADMIN_PWD: ${DATABASE_ADMIN_PWD}
+                WP_ADMIN_USR: ${WP_ADMIN_USR}
+                WP_ADMIN_PWD: ${WP_ADMIN_PWD}
+                WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+                WP_USR: ${WP_USR}
+                WP_PWD: ${WP_PWD}
+                WP_EMAIL: ${WP_EMAIL}
