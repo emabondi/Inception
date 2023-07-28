@@ -1,11 +1,11 @@
 version: '3'
 
 volumes:
-  wordpress:
-    name: wordpress
+  website:
+    name: website
     driver: local
     driver_opts:
-      device: /home/ebondi/data/wordpress
+      device: /home/ebondi/data/website
       o: bind
       type: none
   wp_database:
@@ -28,6 +28,10 @@ services:
       container_name: nginx
       ports:
           - "443:443"
+      #volumes:
+       #     - logs:/var/log/custom_logs
+      volumes_from:
+            - wordpress
       networks:
             - webserver
       restart: always
@@ -36,6 +40,8 @@ services:
       image: mariadb
       build: requirements/mariadb/
       container_name: mariadb
+      ports:
+            - "3306:3306"
       volumes:
           - wp_database:/var/lib/mysql
       networks:
@@ -54,7 +60,7 @@ services:
       ports:
           - "9000:9000"
       volumes:
-          - wordpress:/var/www/html
+          - website:/var/www/html
       networks:
             - webserver
             - database

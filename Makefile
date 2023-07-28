@@ -12,4 +12,7 @@ mariadb:
 	sudo docker container run --workdir /srcs/requirements/nginx/. --rm --name cont-mariadb test-mariadb
 
 prune:
-	sudo docker prune -a
+	sudo docker system prune -a
+
+status:
+	sudo docker ps
